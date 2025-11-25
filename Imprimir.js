@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (actualizada con CORS)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwnimQNlwKJEGDniC6sQSL7rBe0W08BpjXAEo_SPGRg2qcfxgLtcLm7MhWvpYZa6Hc4/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbzj_xLahSq8ui0iBp2pjxFjeZuurT82xKgNy_51yklPdGybtZZKbgA-5cntdNvF2an6/exec";
 
 // Función principal de búsqueda
 async function buscarFichas(termino = '') {
@@ -141,3 +141,4 @@ document.getElementById('btnBuscar').addEventListener('click', () => {
 document.getElementById('buscador').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
+
