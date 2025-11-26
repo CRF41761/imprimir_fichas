@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbxXWkQLfYD9ZbLh5QHxoReAslRBKaWxYA_o2uKfPy6RzRY4esrNS-egKbqBoNsSH2nK/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbxXWkQLfYD9ZbLh5QHxoReAslRBKaWxYA_o2uKfPy6RzRY4esrNS-egKbqBoNsSH2nK/exec"; // <-- Asegúrate de que esta URL sea la NUEVA que publicaste
 
 /* -------------------------
    Helper JSONP (evita CORS)
@@ -152,19 +152,31 @@ function mostrarResultados(registros) {
 
 /* -------------------------
    Imprimir ficha individual
-   - Abre la URL del Web App que devuelve HTML (getFicha)
+   - Obtiene la URL de la ficha imprimible (columna R o S) y la abre directamente
    ------------------------- */
-function imprimirFicha(numeroEntrada) {
+async function imprimirFicha(numeroEntrada) {
     if (!numeroEntrada) return alert('Número de ficha inválido');
-    const urlFicha = `${SPREADSHEET_URL}?getFicha=${encodeURIComponent(numeroEntrada)}`;
-    const ventana = window.open(urlFicha, '_blank', 'width=800,height=600');
-    if (!ventana) {
-        alert('El navegador bloqueó la apertura de ventanas emergentes. Permite popups y vuelve a intentarlo.');
-        return;
+    
+    try {
+        // Pedimos la URL específica de impresión desde el servidor (columnas R/S)
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getPrintUrl=${encodeURIComponent(numeroEntrada)}`);
+        
+        if (!data || !data.url) {
+            alert('❌ No se encontró la ficha imprimible para este número de entrada.\nVerifica que las columnas "FICHA IMPRIMIBLE HISTORIA CLINICA" o "POST MORTEM" estén correctamente configuradas en la hoja "Datos".');
+            return;
+        }
+
+        // Abrimos directamente la ficha en GitHub con los datos pre-cargados
+        const ventana = window.open(data.url, '_blank');
+        if (!ventana) {
+            alert('⚠️ El navegador bloqueó la ventana emergente.\nPor favor, permite pop-ups para este sitio e inténtalo de nuevo.');
+        }
+        // ✅ NO llamamos a .print(): la ficha ya está lista para imprimir desde GitHub
+        
+    } catch (error) {
+        console.error('Error al obtener URL de impresión:', error);
+        alert('⚠️ Error de conexión. ¿Está activa la Web App de Google Apps Script?');
     }
-    ventana.onload = () => {
-        setTimeout(() => ventana.print(), 500);
-    };
 }
 
 /* -------------------------
@@ -200,7 +212,3 @@ document.getElementById('btnBuscar')?.addEventListener('click', () => {
 document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
-
-
-
-
