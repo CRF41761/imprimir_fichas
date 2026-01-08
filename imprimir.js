@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbyc1KfjLSIl42p_0JeGaLjazp197eAuisP3nB7gUHzPflzSUz4cabNytMf6Zu0kGRA/exec"; // <-- Asegúrate de que esta URL sea la NUEVA que publicaste
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbyc1KfjLSIl42p_0JeGaLjazp197eAuisP3nB7gUHzPflzSUz4cabNytMf6Zu0kGRA/exec";
 
 /* -------------------------
    Helper JSONP (evita CORS)
@@ -7,10 +7,8 @@ const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbyc1KfjLSIl42p_
 function loadJSONP(url) {
     return new Promise((resolve, reject) => {
         const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-        // Definir la función global que recibirá los datos
         window[callbackName] = function(data) {
             resolve(data);
-            // cleanup
             try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
             if (script && script.parentNode) script.parentNode.removeChild(script);
         };
@@ -39,7 +37,6 @@ async function buscarFichas(termino = '') {
             throw new Error('Respuesta inesperada del servidor');
         }
 
-        // Filtrar por término de búsqueda (si hay algo escrito)
         let registrosFiltrados = data;
         if (termino.trim() !== '') {
             const terminoLower = termino.toLowerCase();
@@ -70,7 +67,7 @@ async function buscarFichas(termino = '') {
 }
 
 /* -------------------------
-   Mostrar resultados en tabla con colores
+   Mostrar resultados en tabla con DOS botones de impresión
    ------------------------- */
 function mostrarResultados(registros) {
     const resultadosDiv = document.getElementById('resultados');
@@ -81,6 +78,34 @@ function mostrarResultados(registros) {
     }
 
     const html = `
+        <style>
+            .botones-impresion {
+                display: flex;
+                gap: 6px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .btn-print {
+                padding: 5px 8px;
+                font-size: 0.8em;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background: #f8f9fa;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-print:hover {
+                background: #e9ecef;
+            }
+            .btn-destacado {
+                background: #d1ecf1;
+                border-color: #bee5eb;
+                font-weight: bold;
+            }
+            .btn-destacado:hover {
+                background: #bee5eb;
+            }
+        </style>
         <div class="results-header">
             <h2>📄 Registros encontrados: ${registros.length}</h2>
             <button id="btnImprimirTodo" class="btn-print-all">🖨️ Imprimir Seleccionados</button>
@@ -94,30 +119,40 @@ function mostrarResultados(registros) {
                     <th>Fecha</th>
                     <th>Especie</th>
                     <th>Municipio</th>
-                    <th>Tipo</th>
+                    <th>Estado</th>
                     <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
                 ${registros.map(reg => {
-                    const estado = reg.estado_animal || '';
-                    const esVivo = estado.toString().toLowerCase().includes('vivo') || estado.toString().toLowerCase().includes('animal vivo');
+                    const estado = (reg.estado_animal || '').toString().toLowerCase();
+                    const esVivo = estado.includes('vivo') || estado.includes('animal vivo');
                     const tipoClase = esVivo ? 'fila-vivo' : 'fila-cadaver';
-                    const tipoTexto = esVivo ? '🐦 VIVO' : '💀 CADÁVER';
-                    const num = reg.numero_entrada || '';
-                    
+                    const estadoTexto = reg.estado_animal || 'No especificado';
+
                     return `
                     <tr class="${tipoClase}">
-                        <td><input type="checkbox" class="selFicha" value="${num}"></td>
-                        <td><strong>${num || 'N/A'}</strong></td>
+                        <td><input type="checkbox" class="selFicha" value="${reg.numero_entrada || ''}"></td>
+                        <td><strong>${reg.numero_entrada || 'N/A'}</strong></td>
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
-                        <td><span class="tag-${esVivo ? 'vivo' : 'cadaver'}">${tipoTexto}</span></td>
+                        <td><span class="${esVivo ? 'tag-vivo' : 'tag-cadaver'}">${estadoTexto}</span></td>
                         <td>
-                            <button onclick="imprimirFicha('${num}')" class="btn-print">
-                                🖨️ Imprimir
-                            </button>
+                            <div class="botones-impresion">
+                                <button 
+                                    onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
+                                    class="btn-print ${esVivo ? 'btn-destacado' : ''}"
+                                    title="Imprimir Historia Clínica">
+                                    🖨️ Clínica
+                                </button>
+                                <button 
+                                    onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
+                                    class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
+                                    title="Imprimir Ficha Post Mortem">
+                                    💀 Post Mortem
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `}).join('')}
@@ -151,31 +186,32 @@ function mostrarResultados(registros) {
 }
 
 /* -------------------------
-   Imprimir ficha individual
-   - Obtiene la URL de la ficha imprimible (columna R o S) y la abre directamente
+   Imprimir ficha específica (clínica o post mortem)
    ------------------------- */
-async function imprimirFicha(numeroEntrada) {
-    if (!numeroEntrada) return alert('Número de ficha inválido');
+async function imprimirFichaEspecifica(numeroEntrada, tipo) {
+    if (!numeroEntrada || !tipo) return alert('Datos inválidos');
     
     try {
-        // Pedimos la URL específica de impresión desde el servidor (columnas R/S)
-        const data = await loadJSONP(`${SPREADSHEET_URL}?getPrintUrl=${encodeURIComponent(numeroEntrada)}`);
+        const urlParams = new URLSearchParams({
+            getFichaManual: numeroEntrada,
+            tipo: tipo
+        });
+        
+        const data = await loadJSONP(`${SPREADSHEET_URL}?${urlParams.toString()}`);
         
         if (!data || !data.url) {
-            alert('❌ No se encontró la ficha imprimible para este número de entrada.\nVerifica que las columnas "FICHA IMPRIMIBLE HISTORIA CLINICA" o "POST MORTEM" estén correctamente configuradas en la hoja "Datos".');
+            alert('❌ No se pudo generar la ficha.\nVerifica que el número de entrada exista.');
             return;
         }
 
-        // Abrimos directamente la ficha en GitHub con los datos pre-cargados
         const ventana = window.open(data.url, '_blank');
         if (!ventana) {
-            alert('⚠️ El navegador bloqueó la ventana emergente.\nPor favor, permite pop-ups para este sitio e inténtalo de nuevo.');
+            alert('⚠️ El navegador bloqueó la ventana emergente.\nPermite pop-ups e inténtalo de nuevo.');
         }
-        // ✅ NO llamamos a .print(): la ficha ya está lista para imprimir desde GitHub
         
     } catch (error) {
-        console.error('Error al obtener URL de impresión:', error);
-        alert('⚠️ Error de conexión. ¿Está activa la Web App de Google Apps Script?');
+        console.error('Error al imprimir ficha específica:', error);
+        alert('⚠️ Error de conexión con el servidor.');
     }
 }
 
@@ -187,7 +223,6 @@ function imprimirLote(numeros) {
     if (!Array.isArray(numeros) || numeros.length === 0) return;
     if (!confirm(`¿Imprimir ${numeros.length} fichas seleccionadas? Se abrirán ${Math.ceil(numeros.length / 10)} ventanas.`)) return;
     
-    // Imprimir en lotes de 10
     for (let i = 0; i < numeros.length; i += 10) {
         setTimeout(() => {
             const lote = numeros.slice(i, i + 10);
@@ -197,7 +232,7 @@ function imprimirLote(numeros) {
                 alert('El navegador bloqueó la apertura de ventanas emergentes. Permite popups y vuelve a intentarlo.');
                 return;
             }
-            ventana.onload = () => setTimeout(() => ventana.print(), 1000);
+            vista.onload = () => setTimeout(() => ventana.print(), 1000);
         }, i * 2000);
     }
 }
@@ -212,67 +247,3 @@ document.getElementById('btnBuscar')?.addEventListener('click', () => {
 document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
