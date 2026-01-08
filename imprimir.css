@@ -149,11 +149,11 @@ header p {
     border-color: #888;
 }
 
-/* ✅ Botón resaltado: fondo = verde del borde, texto = amarillo negrita */
+/* ✅ Botón resaltado: fondo = verde del borde, texto = negro negrita */
 .btn-destacado {
-    background: #66bb6a; /* Mismo verde que el borde de las filas */
+    background: #38f716; /* Verde vivo */
     border-color: #4caf50; /* Borde ligeramente más oscuro para profundidad */
-    color: #e5ff00; /* Texto amarillo */
+    color: #000000; /* Texto negro */
     font-weight: bold;
 }
 
@@ -241,6 +241,7 @@ footer {
     border-top: 2px solid #667eea;
     color: #666;
 }
+
 
 
 
