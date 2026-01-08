@@ -218,5 +218,21 @@ document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
 
+// ========== NAVEGACIÓN RÁPIDA: Ir arriba / Ir abajo ==========
+document.getElementById('btnIrArriba')?.addEventListener('click', () => {
+    // Ir a la primera fila de resultados (después del header)
+    const primeraFila = document.querySelector('.tabla-fichas tbody tr');
+    if (primeraFila) {
+        primeraFila.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+});
+
+document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
+    // Ir a la última fila de resultados
+    const ultimaFila = document.querySelector('.tabla-fichas tbody tr:last-child');
+    if (ultimaFila) {
+        ultimaFila.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+});
 
 
