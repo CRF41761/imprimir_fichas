@@ -121,34 +121,45 @@ header p {
 /* ========== BOTONES DE IMPRESIÓN ========== */
 .botones-impresion {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .btn-print {
-    width: 140px; /* ✅ Ancho fijo igual para ambos */
-    padding: 8px 10px;
-    font-size: 0.85em;
-    border: 1px solid #ccc;
+    /* ✅ Ancho suficiente para el texto más largo */
+    min-width: 200px;
+    padding: 10px 12px;
+    font-size: 0.9em;
+    /* ✅ Borde más grueso */
+    border: 2px solid #aaa;
     border-radius: 6px;
     background: #f8f9fa;
     color: #333;
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
+    /* ✅ Texto centrado */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-print:hover {
     background: #e9ecef;
+    border-color: #888;
 }
 
-/* ✅ Botón resaltado en verde */
+/* ✅ Fondo verde más vivo */
 .btn-destacado {
-    background: #d4edda; /* Amarillo-verde suave */
-    border-color: #c3e6cb;
+    background: #d4f0d7; /* Verde suave pero más vivo que antes */
+    border-color: #66bb6a; /* Verde más intenso en el borde */
     font-weight: bold;
-    color: #155724;
+    color: #2e7d32; /* Verde oscuro para el texto */
+}
+
+.btn-destacado:hover {
+    background: #c3e9c8;
+    border-color: #4caf50;
 }
 
 /* ========== TABLA ========== */
@@ -230,3 +241,4 @@ footer {
     border-top: 2px solid #667eea;
     color: #666;
 }
+
