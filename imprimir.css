@@ -184,15 +184,15 @@ header p {
     padding: 12px 15px;
 }
 
-/* ✅ Filas alternas con dos tonos de verde */
+/* ✅ Filas alternas con mayor contraste */
 .tabla-fichas tbody tr:nth-child(odd) {
-    background-color: #f0f9f2; /* Verde muy suave */
+    background-color: #d4f0d7; /* Verde claro-vivo (más saturado) */
     border-left: 2px solid #66bb6a;
     border-right: 2px solid #66bb6a;
 }
 
 .tabla-fichas tbody tr:nth-child(even) {
-    background-color: #e8f5e9; /* Verde ligeramente más intenso */
+    background-color: #ffffff; /* Blanco puro (contraste máximo) */
     border-left: 2px solid #66bb6a;
     border-right: 2px solid #66bb6a;
 }
@@ -241,6 +241,7 @@ footer {
     border-top: 2px solid #667eea;
     color: #666;
 }
+
 
 
 
