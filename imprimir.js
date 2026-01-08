@@ -78,34 +78,7 @@ function mostrarResultados(registros) {
     }
 
     const html = `
-        <style>
-            .botones-impresion {
-                display: flex;
-                gap: 6px;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .btn-print {
-                padding: 5px 8px;
-                font-size: 0.8em;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                background: #f8f9fa;
-                cursor: pointer;
-                transition: all 0.2s;
-            }
-            .btn-print:hover {
-                background: #e9ecef;
-            }
-            .btn-destacado {
-                background: #d1ecf1;
-                border-color: #bee5eb;
-                font-weight: bold;
-            }
-            .btn-destacado:hover {
-                background: #bee5eb;
-            }
-        </style>
+        <style>${document.querySelector('link[href="imprimir.css"]').sheet ? '' : ''}</style>
         <div class="results-header">
             <h2>📄 Registros encontrados: ${registros.length}</h2>
             <button id="btnImprimirTodo" class="btn-print-all">🖨️ Imprimir Seleccionados</button>
@@ -124,14 +97,13 @@ function mostrarResultados(registros) {
                 </tr>
             </thead>
             <tbody>
-                ${registros.map(reg => {
+                ${registros.map((reg, idx) => {
                     const estado = (reg.estado_animal || '').toString().toLowerCase();
                     const esVivo = estado.includes('vivo') || estado.includes('animal vivo');
-                    const tipoClase = esVivo ? 'fila-vivo' : 'fila-cadaver';
                     const estadoTexto = reg.estado_animal || 'No especificado';
 
                     return `
-                    <tr class="${tipoClase}">
+                    <tr class="${esVivo ? 'fila-vivo' : 'fila-cadaver'}">
                         <td><input type="checkbox" class="selFicha" value="${reg.numero_entrada || ''}"></td>
                         <td><strong>${reg.numero_entrada || 'N/A'}</strong></td>
                         <td>${reg.fecha || '-'}</td>
@@ -143,14 +115,14 @@ function mostrarResultados(registros) {
                                 <button 
                                     onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
                                     class="btn-print ${esVivo ? 'btn-destacado' : ''}"
-                                    title="Imprimir Historia Clínica">
-                                    🖨️ Clínica
+                                    title="Imprimir ficha clínica">
+                                    Imprimir ficha clínica
                                 </button>
                                 <button 
                                     onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
                                     class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
-                                    title="Imprimir Ficha Post Mortem">
-                                    💀 Post Mortem
+                                    title="Imprimir ficha Post mortem">
+                                    Imprimir ficha Post mortem
                                 </button>
                             </div>
                         </td>
@@ -184,7 +156,6 @@ function mostrarResultados(registros) {
         });
     }
 }
-
 /* -------------------------
    Imprimir ficha específica (clínica o post mortem)
    ------------------------- */
@@ -247,4 +218,5 @@ document.getElementById('btnBuscar')?.addEventListener('click', () => {
 document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
+
 
