@@ -78,7 +78,6 @@ function mostrarResultados(registros) {
     }
 
     const html = `
-        <style>${document.querySelector('link[href="imprimir.css"]').sheet ? '' : ''}</style>
         <div class="results-header">
             <h2>📄 Registros encontrados: ${registros.length}</h2>
             <button id="btnImprimirTodo" class="btn-print-all">🖨️ Imprimir Seleccionados</button>
@@ -97,10 +96,9 @@ function mostrarResultados(registros) {
                 </tr>
             </thead>
             <tbody>
-                ${registros.map((reg, idx) => {
-                    const estado = (reg.estado_animal || '').toString().toLowerCase();
-                    const esVivo = estado.includes('vivo') || estado.includes('animal vivo');
-                    const estadoTexto = reg.estado_animal || 'No especificado';
+                ${registros.map(reg => {
+                    const estado = reg.estado_animal || 'No especificado';
+                    const esVivo = (estado.toString().toLowerCase()).includes('vivo') || estado.includes('animal vivo');
 
                     return `
                     <tr class="${esVivo ? 'fila-vivo' : 'fila-cadaver'}">
@@ -109,7 +107,8 @@ function mostrarResultados(registros) {
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
-                        <td><span class="${esVivo ? 'tag-vivo' : 'tag-cadaver'}">${estadoTexto}</span></td>
+                        <!-- ✅ Estado: solo texto negro, sin fondo ni marco -->
+                        <td>${estado}</td>
                         <td>
                             <div class="botones-impresion">
                                 <button 
@@ -218,5 +217,6 @@ document.getElementById('btnBuscar')?.addEventListener('click', () => {
 document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
+
 
 
