@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbyc1KfjLSIl42p_0JeGaLjazp197eAuisP3nB7gUHzPflzSUz4cabNytMf6Zu0kGRA/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwPCfTJqptr8kvmTRwxOk4VjZoSP_WUCOqIilOYT-WWt2yDzJURRbO3qP6I8KxvBp2n/exec";
 
 /* -------------------------
    Helper JSONP (evita CORS)
@@ -247,3 +247,4 @@ document.getElementById('btnBuscar')?.addEventListener('click', () => {
 document.getElementById('buscador')?.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') buscarFichas(e.target.value);
 });
+
