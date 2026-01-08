@@ -118,6 +118,37 @@ header p {
     color: #333;
 }
 
+/* ========== NUEVOS ESTILOS PARA BOTONES DE IMPRESIÓN ========== */
+.botones-impresion {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-print {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-print:hover {
+    background: #e9ecef;
+}
+
+.btn-destacado {
+    background: #d1ecf1;
+    border-color: #bee5eb;
+    font-weight: bold;
+    color: #0c5460;
+}
+
+/* ========== TABLA ========== */
 .tabla-fichas {
     width: 100%;
     border-collapse: collapse;
@@ -142,7 +173,6 @@ header p {
     transition: all 0.3s;
 }
 
-/* ✅ ESTILOS CLAVE: Filas coloreadas */
 .fila-vivo {
     background: #e8f5e9;
     border-left: 5px solid #4caf50;
@@ -158,18 +188,20 @@ header p {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.btn-print {
-    background: #ffc107;
-    color: #000;
+/* ========== BOTÓN PRINCIPAL DE IMPRESIÓN (para selección múltiple) ========== */
+.btn-print-all {
     padding: 8px 15px;
+    background: #28a745;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1em;
 }
 
-.btn-print:hover {
-    background: #e0a800;
+.btn-print-all:hover {
+    background: #218838;
 }
 
 .error-box {
