@@ -118,30 +118,30 @@ header p {
     color: #333;
 }
 
-/* ========== BOTONES DE IMPRESIÓN ========== */
+/* ========== BOTONES DE IMPRESIÓN (columna Acción) ========== */
 .botones-impresion {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .btn-print {
-    /* ✅ Ancho suficiente para el texto más largo */
-    min-width: 200px;
+    /* ✅ Ancho fijo basado en el texto más largo */
+    width: 220px; /* Ajusta si es necesario */
     padding: 10px 12px;
     font-size: 0.9em;
-    /* ✅ Borde más grueso */
     border: 2px solid #aaa;
     border-radius: 6px;
     background: #f8f9fa;
     color: #333;
     cursor: pointer;
     transition: all 0.2s;
-    /* ✅ Texto centrado */
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    word-wrap: break-word;
 }
 
 .btn-print:hover {
@@ -149,12 +149,12 @@ header p {
     border-color: #888;
 }
 
-/* ✅ Fondo verde más vivo */
+/* ✅ Fondo verde vivo para el botón resaltado */
 .btn-destacado {
-    background: #d4f0d7; /* Verde suave pero más vivo que antes */
-    border-color: #66bb6a; /* Verde más intenso en el borde */
+    background: #d4f0d7; /* Verde claro-vivo */
+    border-color: #66bb6a; /* Verde medio */
     font-weight: bold;
-    color: #2e7d32; /* Verde oscuro para el texto */
+    color: #2e7d32; /* Texto verde oscuro */
 }
 
 .btn-destacado:hover {
@@ -241,4 +241,5 @@ footer {
     border-top: 2px solid #667eea;
     color: #666;
 }
+
 
