@@ -149,17 +149,17 @@ header p {
     border-color: #888;
 }
 
-/* ✅ Fondo verde vivo para el botón resaltado */
+/* ✅ Botón resaltado: fondo = verde del borde, texto = negro negrita */
 .btn-destacado {
-    background: #d4f0d7; /* Verde claro-vivo */
-    border-color: #66bb6a; /* Verde medio */
+    background: #66bb6a; /* Mismo verde que el borde de las filas */
+    border-color: #4caf50; /* Borde ligeramente más oscuro para profundidad */
+    color: #000000; /* Texto negro */
     font-weight: bold;
-    color: #2e7d32; /* Texto verde oscuro */
 }
 
 .btn-destacado:hover {
-    background: #c3e9c8;
-    border-color: #4caf50;
+    background: #78c978; /* Verde ligeramente más claro al pasar el ratón */
+    border-color: #43a047;
 }
 
 /* ========== TABLA ========== */
@@ -241,6 +241,7 @@ footer {
     border-top: 2px solid #667eea;
     color: #666;
 }
+
 
 
 
