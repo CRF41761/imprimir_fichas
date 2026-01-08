@@ -118,7 +118,7 @@ header p {
     color: #333;
 }
 
-/* ========== NUEVOS ESTILOS PARA BOTONES DE IMPRESIÓN ========== */
+/* ========== BOTONES DE IMPRESIÓN ========== */
 .botones-impresion {
     display: flex;
     gap: 8px;
@@ -127,25 +127,28 @@ header p {
 }
 
 .btn-print {
-    padding: 6px 12px;
+    width: 140px; /* ✅ Ancho fijo igual para ambos */
+    padding: 8px 10px;
     font-size: 0.85em;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 6px;
     background: #f8f9fa;
     color: #333;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
 }
 
 .btn-print:hover {
     background: #e9ecef;
 }
 
+/* ✅ Botón resaltado en verde */
 .btn-destacado {
-    background: #d1ecf1;
-    border-color: #bee5eb;
+    background: #d4edda; /* Amarillo-verde suave */
+    border-color: #c3e6cb;
     font-weight: bold;
-    color: #0c5460;
+    color: #155724;
 }
 
 /* ========== TABLA ========== */
@@ -169,17 +172,24 @@ header p {
     padding: 12px 15px;
 }
 
-.tabla-fichas tr {
-    transition: all 0.3s;
+/* ✅ Colores alternos: amarillo suave + estado */
+.tabla-fichas tbody tr:nth-child(even) {
+    background-color: #fff9e6; /* Amarillo suave */
 }
 
-.fila-vivo {
-    background: #e8f5e9;
+.tabla-fichas tbody tr:nth-child(odd) {
+    /* El color se sobrescribirá si tiene clase fila-vivo o fila-cadaver */
+    background-color: #ffffff;
+}
+
+/* Sobrescribir el color alterno si tiene estado específico */
+.tabla-fichas tbody tr.fila-vivo {
+    background: #e8f5e9 !important;
     border-left: 5px solid #4caf50;
 }
 
-.fila-cadaver {
-    background: #ffebee;
+.tabla-fichas tbody tr.fila-cadaver {
+    background: #ffebee !important;
     border-left: 5px solid #f44336;
 }
 
@@ -188,7 +198,7 @@ header p {
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* ========== BOTÓN PRINCIPAL DE IMPRESIÓN (para selección múltiple) ========== */
+/* ========== BOTÓN DE IMPRIMIR SELECCIONADOS ========== */
 .btn-print-all {
     padding: 8px 15px;
     background: #28a745;
