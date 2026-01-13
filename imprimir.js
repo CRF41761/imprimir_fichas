@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbxuXe6Ox-tyQGhKZ3neJRb0ChLDu5SrYKUlJn5BSzz_gthA9v9Kg7eVvRJgjcg8DiGIRg/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwDzqn126BO60WTBsGEQQkc0uCwEu1WQu5n8gjoajqqL_hj7R3z_MwSrfmMnXJAUpj5Kg/exec";
 
 /* -------------------------
    Helper JSONP (evita CORS)
@@ -234,6 +234,7 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
         ultimaFila.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 });
+
 
 
 
