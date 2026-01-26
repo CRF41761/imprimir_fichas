@@ -60,7 +60,7 @@ async function buscarFichas(termino = '') {
 
         // ✅ Aplicar orden según selección
         const ordenSelect = document.getElementById('ordenSelector');
-       const orden = ordenSelect ? ordenSelect.value : 'entrada-asc';
+       const orden = ordenSelect ? ordenSelect.value : 'entrada-desc';
 
 if (orden === 'entrada-desc') {
     // Más reciente primero (descendente)
@@ -275,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
