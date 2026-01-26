@@ -52,7 +52,19 @@ async function buscarFichas(termino = '') {
                 );
             });
         }
-        
+
+        // ✅ Aplicar orden según selección
+        const ordenSelect = document.getElementById('ordenSelector');
+        const orden = ordenSelect ? ordenSelect.value : 'none';
+
+        if (orden === 'entrada-desc') {
+            registrosFiltrados.sort((a, b) => {
+                const numA = parseInt(a.numero_entrada) || 0;
+                const numB = parseInt(b.numero_entrada) || 0;
+                return numB - numA; // descendente → más reciente arriba
+            });
+        }
+
         mostrarResultados(registrosFiltrados);
         
     } catch (error) {
@@ -234,6 +246,7 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
         ultimaFila.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 });
+
 
 
 
