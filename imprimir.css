@@ -270,6 +270,28 @@ footer {
     transform: scale(1.1);
 }
 
+/* ========== SELECTOR DE ORDEN ========== */
+.orden-filtro {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.orden-filtro label {
+    font-weight: bold;
+    color: #333;
+}
+
+#ordenSelector {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
 
 
 
