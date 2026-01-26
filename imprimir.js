@@ -247,6 +247,21 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
     }
 });
 
+// ========== INICIALIZACIÓN AL CARGAR LA PÁGINA ==========
+document.addEventListener('DOMContentLoaded', () => {
+    const ordenSelector = document.getElementById('ordenSelector');
+    const buscador = document.getElementById('buscador');
+
+    if (ordenSelector) {
+        ordenSelector.addEventListener('change', () => {
+            const termino = buscador ? buscador.value : '';
+            buscarFichas(termino);
+        });
+    }
+
+    // Cargar todos los registros al iniciar la página
+    buscarFichas();
+});
 
 
 
