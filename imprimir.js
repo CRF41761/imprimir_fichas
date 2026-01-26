@@ -60,15 +60,23 @@ async function buscarFichas(termino = '') {
 
         // ✅ Aplicar orden según selección
         const ordenSelect = document.getElementById('ordenSelector');
-        const orden = ordenSelect ? ordenSelect.value : 'none';
+       const orden = ordenSelect ? ordenSelect.value : 'entrada-asc';
 
-        if (orden === 'entrada-desc') {
-            registrosFiltrados.sort((a, b) => {
-                const numA = parseInt(a.numero_entrada) || 0;
-                const numB = parseInt(b.numero_entrada) || 0;
-                return numB - numA; // descendente → más reciente arriba
-            });
-        }
+if (orden === 'entrada-desc') {
+    // Más reciente primero (descendente)
+    registrosFiltrados.sort((a, b) => {
+        const numA = parseInt(a.numero_entrada) || 0;
+        const numB = parseInt(b.numero_entrada) || 0;
+        return numB - numA;
+    });
+} else if (orden === 'entrada-asc') {
+    // Más antiguo primero (ascendente)
+    registrosFiltrados.sort((a, b) => {
+        const numA = parseInt(a.numero_entrada) || 0;
+        const numB = parseInt(b.numero_entrada) || 0;
+        return numA - numB;
+    });
+}
 
         mostrarResultados(registrosFiltrados);
         
@@ -267,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
