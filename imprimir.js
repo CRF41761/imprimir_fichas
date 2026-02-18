@@ -135,21 +135,35 @@ function mostrarResultados(registros) {
                         <!-- ✅ Estado: solo texto negro, sin fondo ni marco -->
                         <td>${estado}</td>
                         <td>
-                            <div class="botones-impresion">
-                                <button 
-                                    onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
-                                    class="btn-print ${esVivo ? 'btn-destacado' : ''}"
-                                    title="Imprimir ficha clínica">
-                                    Imprimir ficha clínica
-                                </button>
-                                <button 
-                                    onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
-                                    class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
-                                    title="Imprimir ficha Post mortem">
-                                    Imprimir ficha Post mortem
-                                </button>
-                            </div>
-                        </td>
+    <div class="botones-impresion">
+        ${reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
+            <!-- ✅ SOLO BOTÓN CRÍA EN CAUTIVIDAD -->
+            <button 
+                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'cria_cautividad')" 
+                class="btn-print btn-destacado"
+                style="background-color: #4CAF50; color: white; border: 2px solid #333; font-weight: bold;"
+                title="Imprimir ficha Cría en Cautividad">
+                🐣 Imprimir ficha Cría
+            </button>
+        ` : `
+            <!-- ✅ BOTONES NORMALES: Clínica / Post Mortem -->
+            <button 
+                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
+                class="btn-print ${esVivo ? 'btn-destacado' : ''}"
+                style="border: 2px solid #333;"
+                title="Imprimir ficha clínica">
+                Imprimir ficha clínica
+            </button>
+            <button 
+                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
+                class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
+                style="border: 2px solid #333;"
+                title="Imprimir ficha Post mortem">
+                Imprimir ficha Post mortem
+            </button>
+        `}
+    </div>
+</td>
                     </tr>
                 `}).join('')}
             </tbody>
@@ -275,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
