@@ -116,7 +116,7 @@ function mostrarResultados(registros) {
                     <th>Fecha</th>
                     <th>Especie</th>
                     <th>Municipio</th>
-                    <th>Estado</th>
+                    <th>Cumplimentado</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -289,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
