@@ -1,5 +1,15 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
 const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbx03GGpzuCFwG43CmU74lSz4kHNgCyHiNIGUu5CsqXgPZuYbLRd96nQ5XImIaqwGYKRUg/exec";
+/* -------------------------
+   Helper para normalizar texto (quitar acentos)
+   ------------------------- */
+function normalizarTexto(texto) {
+    if (!texto) return '';
+    return texto.toString()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase();
+}
 
 /* -------------------------
    Helper JSONP (evita CORS)
@@ -290,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
