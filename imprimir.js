@@ -52,7 +52,8 @@ async function buscarFichas(termino = '') {
         (reg.especie_cientifico && reg.especie_cientifico.toLowerCase().includes(terminoLower)) ||
         (reg.fecha && reg.fecha.toString().includes(termino)) ||
         (reg.municipio && reg.municipio.toLowerCase().includes(terminoLower)) ||
-        (reg.estado_animal && reg.estado_animal.toString().toLowerCase().includes(terminoLower));
+        (reg.estado_animal && reg.estado_animal.toString().toLowerCase().includes(terminoLower)) ||
+    (reg.cumplimentado && reg.cumplimentado.toString().toLowerCase().includes(terminoLower));  // ✅ NUEVA LÍNEA
 
     return coincideNumeroExacto || coincideOtrosCampos;
 });
@@ -289,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
