@@ -49,24 +49,23 @@ async function buscarFichas(termino = '') {
 
         let registrosFiltrados = data;
         if (termino.trim() !== '') {
-            const terminoLower = termino.toLowerCase();
-           registrosFiltrados = data.filter(reg => {
-    const numStr = reg.numero_entrada ? reg.numero_entrada.toString() : '';
-    
-    // ✅ Coincidencia EXACTA para número de entrada (solo si el término es un número)
-    const coincideNumeroExacto = /^\d+$/.test(termino.trim()) && numStr === termino.trim();
-    
-    // Búsqueda parcial en otros campos (solo si no es una búsqueda numérica exacta)
-    const coincideOtrosCampos = 
-        (reg.especie_comun && reg.especie_comun.toLowerCase().includes(terminoLower)) ||
-        (reg.especie_cientifico && reg.especie_cientifico.toLowerCase().includes(terminoLower)) ||
-        (reg.fecha && reg.fecha.toString().includes(termino)) ||
-        (reg.municipio && reg.municipio.toLowerCase().includes(terminoLower)) ||
-        (reg.estado_animal && reg.estado_animal.toString().toLowerCase().includes(terminoLower)) ||
-    (reg.cumplimentado && reg.cumplimentado.toString().toLowerCase().includes(terminoLower));  // ✅ NUEVA LÍNEA
+    const terminoNormalizado = normalizarTexto(termino);
+    registrosFiltrados = data.filter(reg => {
+        const numStr = reg.numero_entrada ? reg.numero_entrada.toString() : '';
+        
+        const coincideNumeroExacto = /^\d+$/.test(termino.trim()) && numStr === termino.trim();
+        
+        const coincideOtrosCampos = 
+            (reg.especie_comun && normalizarTexto(reg.especie_comun).includes(terminoNormalizado)) ||
+            (reg.especie_cientifico && normalizarTexto(reg.especie_cientifico).includes(terminoNormalizado)) ||
+            (reg.fecha && normalizarTexto(reg.fecha).includes(terminoNormalizado)) ||
+            (reg.municipio && normalizarTexto(reg.municipio).includes(terminoNormalizado)) ||
+            (reg.estado_animal && normalizarTexto(reg.estado_animal).includes(terminoNormalizado)) ||
+            (reg.cumplimentado && normalizarTexto(reg.cumplimentado).includes(terminoNormalizado));
 
-    return coincideNumeroExacto || coincideOtrosCampos;
-});
+        return coincideNumeroExacto || coincideOtrosCampos;
+    });
+}
         }
 
         // ✅ Aplicar orden según selección
@@ -300,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
