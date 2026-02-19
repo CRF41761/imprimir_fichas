@@ -132,8 +132,8 @@ function mostrarResultados(registros) {
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
-                        <!-- ✅ Estado: solo texto negro, sin fondo ni marco -->
-                        <td>${estado}</td>
+                        <!-- ✅ Cumplimentado por (Columna O) -->
+<td>${reg.cumplimentado || '-'}</td>
                         <td>
     <div class="botones-impresion">
         ${reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
@@ -289,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
