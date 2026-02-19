@@ -66,8 +66,7 @@ async function buscarFichas(termino = '') {
         return coincideNumeroExacto || coincideOtrosCampos;
     });
 }
-        }
-
+       
         // ✅ Aplicar orden según selección
         const ordenSelect = document.getElementById('ordenSelector');
        const orden = ordenSelect ? ordenSelect.value : 'entrada-desc';
@@ -299,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
