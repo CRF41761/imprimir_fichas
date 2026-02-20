@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbzeT7usplyJzVP61bLaDr2_nV-CWtblyqOo3cmHgFZMS9EA8kar_lKSRG9QYlKpEo0X3Q/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbyu0v87jFUgb5oPxRS5D9g_ar_IVbff8dtfk2haNqLKtHNEV8dN2-21s5mSRLmg2HckcQ/exec";
 /* -------------------------
    Helper para normalizar texto (quitar acentos)
    ------------------------- */
@@ -298,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
