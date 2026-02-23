@@ -235,23 +235,41 @@ async function imprimirFichaEspecifica(numeroEntrada, tipo) {
 
 /* -------------------------
    Imprimir lote de fichas
-   - Abre la URL getFichaBatch que devuelve HTML con varias fichas
+   - Abre CADA FICHA COMPLETA en ventana nueva (usa getFichaManual)
+   - Auto-imprime después de cargar
    ------------------------- */
 function imprimirLote(numeros) {
     if (!Array.isArray(numeros) || numeros.length === 0) return;
-    if (!confirm(`¿Imprimir ${numeros.length} fichas seleccionadas? Se abrirán ${Math.ceil(numeros.length / 10)} ventanas.`)) return;
     
-    for (let i = 0; i < numeros.length; i += 10) {
+    if (!confirm(`¿Imprimir ${numeros.length} fichas seleccionadas?\n\nSe abrirá cada ficha COMPLETA en una pestaña nueva.`)) return;
+    
+    let ventanasAbiertas = 0;
+    
+    numeros.forEach((num, index) => {
         setTimeout(() => {
-            const lote = numeros.slice(i, i + 10);
-            const numerosStr = lote.map(n => encodeURIComponent(n)).join(',');
-            const ventana = window.open(`${SPREADSHEET_URL}?getFichaBatch=${numerosStr}`, '_blank');
-            if (!ventana) {
-                alert('El navegador bloqueó la apertura de ventanas emergentes. Permite popups y vuelve a intentarlo.');
-                return;
+            // ✅ Abrir ficha CLÍNICA COMPLETA (con diseño profesional de GitHub)
+            const url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=clinica`;
+            const ventana = window.open(url, '_blank');
+            
+            if (ventana) {
+                ventanasAbiertas++;
+                
+                // ✅ Esperar a que cargue y auto-imprimir
+                ventana.onload = function() {
+                    setTimeout(() => {
+                        ventana.print();
+                    }, 1500); // 1.5 segundos para que cargue bien
+                };
             }
-            vista.onload = () => setTimeout(() => ventana.print(), 1000);
-        }, i * 2000);
+        }, index * 1000); // 1 segundo entre cada ficha
+    });
+    
+    if (ventanasAbiertas === 0) {
+        alert('⚠️ El navegador bloqueó las ventanas emergentes.\n\nPermite pop-ups para este sitio e inténtalo de nuevo.');
+    } else {
+        setTimeout(() => {
+            alert(`✅ Se abrieron ${ventanasAbiertas} fichas.\n\nCada ficha se imprimirá automáticamente.`);
+        }, 2000);
     }
 }
 
@@ -298,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
