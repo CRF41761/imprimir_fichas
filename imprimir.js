@@ -241,7 +241,34 @@ async function imprimirFichaEspecifica(numeroEntrada, tipo) {
         alert('⚠️ Error de conexión con el servidor.');
     }
 }
+/* -------------------------
+   Imprimir ficha Testudo hermanni (nuevo endpoint)
+   ------------------------- */
+async function imprimirFichaTestudo(numeroEntrada) {
+    if (!numeroEntrada) return alert('Número de entrada inválido');
+    
+    try {
+        const urlParams = new URLSearchParams({
+            getFichaTestudo: numeroEntrada
+        });
+        
+        const data = await loadJSONP(`${SPREADSHEET_URL}?${urlParams.toString()}`);
+        
+        if (!data || !data.url) {
+            alert('❌ No se pudo generar la ficha Testudo.\nVerifica que el número de entrada exista.');
+            return;
+        }
 
+        const ventana = window.open(data.url, '_blank');
+        if (!ventana) {
+            alert('⚠️ El navegador bloqueó la ventana emergente.\nPermite pop-ups e inténtalo de nuevo.');
+        }
+        
+    } catch (error) {
+        console.error('Error al imprimir ficha Testudo:', error);
+        alert('⚠️ Error de conexión con el servidor.');
+    }
+}
 /* -------------------------
    Imprimir lote de fichas
    - Abre CADA FICHA COMPLETA en ventana nueva (usa getFichaManual)
@@ -325,6 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
