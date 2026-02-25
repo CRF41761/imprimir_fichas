@@ -273,39 +273,68 @@ async function imprimirFichaTestudo(numeroEntrada) {
    Imprimir lote de fichas
    - Abre CADA FICHA COMPLETA en ventana nueva (usa getFichaManual)
    - Auto-imprime después de cargar
-   ------------------------- */
-function imprimirLote(numeros) {
+      ------------------------- */
+async function imprimirLote(numeros) {
     if (!Array.isArray(numeros) || numeros.length === 0) return;
     
     if (!confirm(`¿Imprimir ${numeros.length} fichas seleccionadas?\n\nSe abrirá cada ficha COMPLETA en una pestaña nueva.`)) return;
     
     let ventanasAbiertas = 0;
     
-    numeros.forEach((num, index) => {
-        setTimeout(() => {
-            // ✅ Abrir ficha CLÍNICA COMPLETA (con diseño profesional de GitHub)
-            const url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=clinica`;
-            const ventana = window.open(url, '_blank');
-            
-            if (ventana) {
-                ventanasAbiertas++;
+    // ✅ Cargar datos para detectar tipo de ficha de cada registro
+    try {
+        const todosLosDatos = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true`);
+        
+        for (let [index, num] of numeros.entries()) {
+            setTimeout(async () => {
+                // Buscar el registro para determinar tipo de ficha
+                const registro = todosLosDatos.find(r => r.numero_entrada == num);
+                let url = '';
                 
-                // ✅ Esperar a que cargue y auto-imprimir
-                ventana.onload = function() {
-                    setTimeout(() => {
-                        ventana.print();
-                    }, 1500); // 1.5 segundos para que cargue bien
-                };
-            }
-        }, index * 1000); // 1 segundo entre cada ficha
-    });
-    
-    if (ventanasAbiertas === 0) {
-        alert('⚠️ El navegador bloqueó las ventanas emergentes.\n\nPermite pop-ups para este sitio e inténtalo de nuevo.');
-    } else {
+                if (registro) {
+                    const especie = (registro.especie_cientifico || '').toString().toLowerCase();
+                    const causa = (registro.posible_causa || '').toString().toLowerCase();
+                    
+                    // ✅ Determinar endpoint según especie/causa
+                    if (especie.includes('testudo hermanni hermanni')) {
+                        url = `${SPREADSHEET_URL}?getFichaTestudo=${num}`;
+                    } else if (causa.includes('nacido en el centro') || causa.includes('cría en cautividad')) {
+                        url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=cria_cautividad`;
+                    } else {
+                        const estado = (registro.estado_animal || '').toString().toLowerCase();
+                        const esVivo = estado.includes('vivo') || estado.includes('animal vivo');
+                        const tipo = esVivo ? 'clinica' : 'postmortem';
+                        url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=${tipo}`;
+                    }
+                } else {
+                    // Fallback: intentar con clínica por defecto
+                    url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=clinica`;
+                }
+                
+                const ventana = window.open(url, '_blank');
+                
+                if (ventana) {
+                    ventanasAbiertas++;
+                    ventana.onload = function() {
+                        setTimeout(() => {
+                            ventana.print();
+                        }, 1500);
+                    };
+                }
+            }, index * 1000);
+        }
+        
         setTimeout(() => {
-            alert(`✅ Se abrieron ${ventanasAbiertas} fichas.\n\nCada ficha se imprimirá automáticamente.`);
+            if (ventanasAbiertas > 0) {
+                alert(`✅ Se abrieron ${ventanasAbiertas} fichas.\n\nCada ficha se imprimirá automáticamente.`);
+            } else {
+                alert('⚠️ El navegador bloqueó las ventanas emergentes.\n\nPermite pop-ups para este sitio e inténtalo de nuevo.');
+            }
         }, 2000);
+        
+    } catch (error) {
+        console.error('Error en imprimirLote:', error);
+        alert('⚠️ Error al cargar datos para impresión por lotes.');
     }
 }
 
@@ -352,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
