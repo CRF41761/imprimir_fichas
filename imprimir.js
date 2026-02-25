@@ -145,7 +145,16 @@ function mostrarResultados(registros) {
 <td>${reg.cumplimentado || '-'}</td>
                         <td>
     <div class="botones-impresion">
-        ${reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
+        ${reg.especie_cientifico && reg.especie_cientifico.toString().toLowerCase().includes('testudo hermanni hermanni') ? `
+            <!-- ✅ SOLO BOTÓN TESTUDO -->
+            <button 
+                onclick="imprimirFichaTestudo('${reg.numero_entrada}')" 
+                class="btn-print btn-destacado"
+                style="background-color: #4CAF50; color: white; border: 2px solid #2E7D32; font-weight: bold;"
+                title="Imprimir ficha Testudo hermanni">
+                🐢 Imprimir ficha Testudo
+            </button>
+        ` : reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
             <!-- ✅ SOLO BOTÓN CRÍA EN CAUTIVIDAD -->
             <button 
                 onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'cria_cautividad')" 
@@ -316,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar todos los registros al iniciar la página
     buscarFichas();
 });
+
 
 
 
