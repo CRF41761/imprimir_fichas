@@ -142,9 +142,9 @@ function mostrarResultados(registros) {
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
-                        <td>${reg.coordenadas_mapa || '-'}</td>
-                        <!-- ✅ Cumplimentado por (Columna O) -->
+<!-- ✅ Cumplimentado por (Columna O) -->
 <td>${reg.cumplimentado || '-'}</td>
+<td>${reg.coordenadas_mapa || '-'}</td>
                         <td>
     <div class="botones-impresion">
         ${reg.especie_cientifico && reg.especie_cientifico.toString().toLowerCase().includes('testudo hermanni hermanni') ? `
