@@ -126,6 +126,7 @@ function mostrarResultados(registros) {
                     <th>Especie</th>
                     <th>Municipio</th>
                     <th>Cumplimentado</th>
+                    <th>Coordenadas</th>
                     <th>Acción</th>
                 </tr>
             </thead>
@@ -141,6 +142,7 @@ function mostrarResultados(registros) {
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
+                        <td>${reg.coordenadas_mapa || '-'}</td>
                         <!-- ✅ Cumplimentado por (Columna O) -->
 <td>${reg.cumplimentado || '-'}</td>
                         <td>
