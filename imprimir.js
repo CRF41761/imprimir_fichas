@@ -1,5 +1,5 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbxn6leQaMWcfZGReZ0IWjxOfmtP1El9e-R3LG2HIO5ZGRcVCERVY8Gstwmhvm8vqQTZjw/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwy4fQY7lcmB9GdJau4L8T4fhrlg658fr8HRFhudVqFkcUwQemp4RO7JDf3ZVmGe6jsPA/exec";
 /* -------------------------
    Helper para normalizar texto (quitar acentos)
    ------------------------- */
