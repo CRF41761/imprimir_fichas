@@ -159,8 +159,8 @@ function mostrarResultados(registros) {
                 <tr>
                     <th><input type="checkbox" id="selTodos"></th>
                     <th onclick="toggleSort('numero')" style="cursor:pointer; position:relative;">
-                        Nº Entrada <span id="iconoNumero" style="font-size:0.8em; margin-left:4px;">▼</span>
-                    </th>
+    Nº Entrada <span id="iconoNumero" style="font-size:1.2em; margin-left:6px; color:#FFD700; text-shadow: 1px 1px 2px rgba(0,0,0,0.3); transition: transform 0.2s;">▼</span>
+</th>
                     <th>Fecha</th>
                     <th>Especie</th>
                     <th>Municipio</th>
