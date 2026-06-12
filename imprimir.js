@@ -1,5 +1,6 @@
 // ✅ URL de tu Google Sheets (Web App de Apps Script)
-const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwy4fQY7lcmB9GdJau4L8T4fhrlg658fr8HRFhudVqFkcUwQemp4RO7JDf3ZVmGe6jsPA/exec";
+const SPREADSHEET_URL = "https://script.google.com/macros/s/AKfycbwcxjqSPkimHBsS9WY6Deq-7Y-vF9vPD2INgjMA2zhdB670_2SRnih-WqgtYAq4gMZv1A/exec";
+
 /* -------------------------
    Helper para normalizar texto (quitar acentos)
    ------------------------- */
@@ -35,60 +36,18 @@ function loadJSONP(url) {
 }
 
 /* -------------------------
-   Función principal de búsqueda (usa JSONP)
+   Función principal: cargar últimas 200 entradas
    ------------------------- */
-async function buscarFichas(termino = '') {
+async function cargarUltimas() {
     const resultadosDiv = document.getElementById('resultados');
-    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando todas las fichas...</p>';
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 200 fichas...</p>';
     
     try {
-        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true`);
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=200`);
         if (!Array.isArray(data)) {
             throw new Error('Respuesta inesperada del servidor');
         }
-
-        let registrosFiltrados = data;
-        if (termino.trim() !== '') {
-    const terminoNormalizado = normalizarTexto(termino);
-    registrosFiltrados = data.filter(reg => {
-        const numStr = reg.numero_entrada ? reg.numero_entrada.toString() : '';
-        
-        const coincideNumeroExacto = /^\d+$/.test(termino.trim()) && numStr === termino.trim();
-        
-        const coincideOtrosCampos = 
-            (reg.especie_comun && normalizarTexto(reg.especie_comun).includes(terminoNormalizado)) ||
-            (reg.especie_cientifico && normalizarTexto(reg.especie_cientifico).includes(terminoNormalizado)) ||
-            (reg.fecha && normalizarTexto(reg.fecha).includes(terminoNormalizado)) ||
-            (reg.municipio && normalizarTexto(reg.municipio).includes(terminoNormalizado)) ||
-            (reg.estado_animal && normalizarTexto(reg.estado_animal).includes(terminoNormalizado)) ||
-            (reg.cumplimentado && normalizarTexto(reg.cumplimentado).includes(terminoNormalizado));
-
-        return coincideNumeroExacto || coincideOtrosCampos;
-    });
-}
-       
-        // ✅ Aplicar orden según selección
-        const ordenSelect = document.getElementById('ordenSelector');
-       const orden = ordenSelect ? ordenSelect.value : 'entrada-desc';
-
-if (orden === 'entrada-desc') {
-    // Más reciente primero (descendente)
-    registrosFiltrados.sort((a, b) => {
-        const numA = parseInt(a.numero_entrada) || 0;
-        const numB = parseInt(b.numero_entrada) || 0;
-        return numB - numA;
-    });
-} else if (orden === 'entrada-asc') {
-    // Más antiguo primero (ascendente)
-    registrosFiltrados.sort((a, b) => {
-        const numA = parseInt(a.numero_entrada) || 0;
-        const numB = parseInt(b.numero_entrada) || 0;
-        return numA - numB;
-    });
-}
-
-        mostrarResultados(registrosFiltrados);
-        
+        mostrarResultados(data);
     } catch (error) {
         console.error('Error:', error);
         resultadosDiv.innerHTML = `
@@ -101,7 +60,82 @@ if (orden === 'entrada-desc') {
 }
 
 /* -------------------------
-   Mostrar resultados en tabla con DOS botones de impresión
+   Función de búsqueda con filtros específicos
+   ------------------------- */
+async function buscarFichas() {
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Buscando fichas...</p>';
+    
+    try {
+        const params = new URLSearchParams();
+        params.append('getAllData', 'true');
+        
+        // Obtener valores de los filtros
+        const numero = document.getElementById('filtroNumero').value;
+        const especie = document.getElementById('filtroEspecie').value;
+        const municipio = document.getElementById('filtroMunicipio').value;
+        const fecha = document.getElementById('filtroFecha').value;
+        const cumplimentado = document.getElementById('filtroCumplimentado').value;
+        
+        // Añadir parámetros solo si tienen valor
+        if (numero) params.append('numero', numero);
+        if (especie) params.append('especie', especie);
+        if (municipio) params.append('municipio', municipio);
+        if (fecha) params.append('fecha', fecha);
+        if (cumplimentado) params.append('cumplimentado', cumplimentado);
+        
+        // Si no hay filtros, cargar últimas 200
+        if (!numero && !especie && !municipio && !fecha && !cumplimentado) {
+            params.append('limit', '200');
+        }
+        
+        const data = await loadJSONP(`${SPREADSHEET_URL}?${params.toString()}`);
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta inesperada del servidor');
+        }
+        mostrarResultados(data);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        resultadosDiv.innerHTML = `
+            <div class="error-box">
+                <p>❌ Error al buscar fichas</p>
+                <p style="font-size:0.9em; color:#999;">Verifica los parámetros e inténtalo de nuevo</p>
+            </div>
+        `;
+    }
+}
+
+/* -------------------------
+   Cargar todas las entradas (con advertencia)
+   ------------------------- */
+async function cargarTodas() {
+    if (!confirm("⚠️ Esto puede tardar 10-20 segundos y consumir mucha memoria. ¿Continuar?")) {
+        return;
+    }
+    
+    const resultadosDiv = document.getElementById('resultados');
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando TODAS las fichas... (puede tardar varios segundos)</p>';
+    
+    try {
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&todas=true`);
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta inesperada del servidor');
+        }
+        mostrarResultados(data);
+    } catch (error) {
+        console.error('Error:', error);
+        resultadosDiv.innerHTML = `
+            <div class="error-box">
+                <p>❌ Error al cargar todas las fichas</p>
+                <p style="font-size:0.9em; color:#999;">El proceso puede haber sido interrumpido por el navegador</p>
+            </div>
+        `;
+    }
+}
+
+/* -------------------------
+   Mostrar resultados en tabla con cabecera clicable
    ------------------------- */
 function mostrarResultados(registros) {
     const resultadosDiv = document.getElementById('resultados');
@@ -111,6 +145,9 @@ function mostrarResultados(registros) {
         return;
     }
 
+    // Guardar datos en localStorage para ordenación
+    localStorage.setItem('datosFichas', JSON.stringify(registros));
+    
     const html = `
         <div class="results-header">
             <h2>📄 Registros encontrados: ${registros.length}</h2>
@@ -121,7 +158,9 @@ function mostrarResultados(registros) {
             <thead>
                 <tr>
                     <th><input type="checkbox" id="selTodos"></th>
-                    <th>Nº Entrada</th>
+                    <th onclick="toggleSort('numero')" style="cursor:pointer; position:relative;">
+                        Nº Entrada <span id="iconoNumero" style="font-size:0.8em; margin-left:4px;">▼</span>
+                    </th>
                     <th>Fecha</th>
                     <th>Especie</th>
                     <th>Municipio</th>
@@ -142,48 +181,44 @@ function mostrarResultados(registros) {
                         <td>${reg.fecha || '-'}</td>
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
-<!-- ✅ Cumplimentado por (Columna O) -->
-<td>${reg.cumplimentado || '-'}</td>
-<td>${reg.coordenadas_mapa || '-'}</td>
+                        <td>${reg.cumplimentado || '-'}</td>
+                        <td>${reg.coordenadas_mapa || '-'}</td>
                         <td>
-    <div class="botones-impresion">
-        ${reg.especie_cientifico && reg.especie_cientifico.toString().toLowerCase().includes('testudo hermanni hermanni') ? `
-            <!-- ✅ SOLO BOTÓN TESTUDO -->
-            <button 
-                onclick="imprimirFichaTestudo('${reg.numero_entrada}')" 
-                class="btn-print btn-destacado"
-                style="background-color: #4CAF50; color: white; border: 2px solid #2E7D32; font-weight: bold;"
-                title="Imprimir ficha Testudo hermanni">
-                🐢 Imprimir ficha Testudo
-            </button>
-        ` : reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
-            <!-- ✅ SOLO BOTÓN CRÍA EN CAUTIVIDAD -->
-            <button 
-                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'cria_cautividad')" 
-                class="btn-print btn-destacado"
-                style="background-color: #4CAF50; color: white; border: 2px solid #333; font-weight: bold;"
-                title="Imprimir ficha Cría en Cautividad">
-                🐣 Imprimir ficha Cría
-            </button>
-        ` : `
-            <!-- ✅ BOTONES NORMALES: Clínica / Post Mortem -->
-            <button 
-                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
-                class="btn-print ${esVivo ? 'btn-destacado' : ''}"
-                style="border: 2px solid #333;"
-                title="Imprimir ficha clínica">
-                Imprimir ficha clínica
-            </button>
-            <button 
-                onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
-                class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
-                style="border: 2px solid #333;"
-                title="Imprimir ficha Post mortem">
-                Imprimir ficha Post mortem
-            </button>
-        `}
-    </div>
-</td>
+                            <div class="botones-impresion">
+                                ${reg.especie_cientifico && reg.especie_cientifico.toString().toLowerCase().includes('testudo hermanni hermanni') ? `
+                                    <button 
+                                        onclick="imprimirFichaTestudo('${reg.numero_entrada}')" 
+                                        class="btn-print btn-destacado"
+                                        style="background-color: #4CAF50; color: white; border: 2px solid #2E7D32; font-weight: bold;"
+                                        title="Imprimir ficha Testudo hermanni">
+                                        🐢 Imprimir ficha Testudo
+                                    </button>
+                                ` : reg.posible_causa && reg.posible_causa.toString().toLowerCase().includes('nacido en el centro') ? `
+                                    <button 
+                                        onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'cria_cautividad')" 
+                                        class="btn-print btn-destacado"
+                                        style="background-color: #4CAF50; color: white; border: 2px solid #333; font-weight: bold;"
+                                        title="Imprimir ficha Cría en Cautividad">
+                                        🐣 Imprimir ficha Cría
+                                    </button>
+                                ` : `
+                                    <button 
+                                        onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'clinica')" 
+                                        class="btn-print ${esVivo ? 'btn-destacado' : ''}"
+                                        style="border: 2px solid #333;"
+                                        title="Imprimir ficha clínica">
+                                        Imprimir ficha clínica
+                                    </button>
+                                    <button 
+                                        onclick="imprimirFichaEspecifica('${reg.numero_entrada}', 'postmortem')" 
+                                        class="btn-print ${!esVivo ? 'btn-destacado' : ''}"
+                                        style="border: 2px solid #333;"
+                                        title="Imprimir ficha Post mortem">
+                                        Imprimir ficha Post mortem
+                                    </button>
+                                `}
+                            </div>
+                        </td>
                     </tr>
                 `}).join('')}
             </tbody>
@@ -213,9 +248,56 @@ function mostrarResultados(registros) {
             imprimirLote(seleccionados);
         });
     }
+    
+    // Sincronizar dropdown de ordenación
+    const ordenSelect = document.getElementById('ordenSelector');
+    if (ordenSelect) {
+        ordenSelect.addEventListener('change', function() {
+            aplicarOrdenacion();
+        });
+    }
 }
+
+// ========== ORDENACIÓN POR CABECERA CLICABLE ==========
+let estadoOrdenacion = {
+    columna: 'numero',
+    direccion: 'desc'
+};
+
+function toggleSort(columna) {
+    if (columna === 'numero') {
+        estadoOrdenacion.direccion = 
+            estadoOrdenacion.direccion === 'desc' ? 'asc' : 'desc';
+        
+        // Actualizar icono
+        document.getElementById('iconoNumero').textContent = 
+            estadoOrdenacion.direccion === 'desc' ? '▼' : '▲';
+        
+        // Sincronizar con dropdown
+        document.getElementById('ordenSelector').value = 
+            estadoOrdenacion.direccion === 'desc' ? 'entrada-desc' : 'entrada-asc';
+        
+        aplicarOrdenacion();
+    }
+}
+
+function aplicarOrdenacion() {
+    const datos = JSON.parse(localStorage.getItem('datosFichas')) || [];
+    const orden = document.getElementById('ordenSelector').value;
+    
+    const datosOrdenados = [...datos].sort((a, b) => {
+        if (orden === 'entrada-desc') {
+            return b.numero_entrada - a.numero_entrada;
+        } else {
+            return a.numero_entrada - b.numero_entrada;
+        }
+    });
+    
+    mostrarResultados(datosOrdenados);
+}
+
 /* -------------------------
-   Imprimir ficha específica (clínica o post mortem)
+   Funciones de impresión (mantenidas igual)
    ------------------------- */
 async function imprimirFichaEspecifica(numeroEntrada, tipo) {
     if (!numeroEntrada || !tipo) return alert('Datos inválidos');
@@ -243,9 +325,7 @@ async function imprimirFichaEspecifica(numeroEntrada, tipo) {
         alert('⚠️ Error de conexión con el servidor.');
     }
 }
-/* -------------------------
-   Imprimir ficha Testudo hermanni (nuevo endpoint)
-   ------------------------- */
+
 async function imprimirFichaTestudo(numeroEntrada) {
     if (!numeroEntrada) return alert('Número de entrada inválido');
     
@@ -271,11 +351,7 @@ async function imprimirFichaTestudo(numeroEntrada) {
         alert('⚠️ Error de conexión con el servidor.');
     }
 }
-/* -------------------------
-   Imprimir lote de fichas
-   - Abre CADA FICHA COMPLETA en ventana nueva (usa getFichaManual)
-   - Auto-imprime después de cargar
-      ------------------------- */
+
 async function imprimirLote(numeros) {
     if (!Array.isArray(numeros) || numeros.length === 0) return;
     
@@ -283,13 +359,11 @@ async function imprimirLote(numeros) {
     
     let ventanasAbiertas = 0;
     
-    // ✅ Cargar datos para detectar tipo de ficha de cada registro
     try {
-        const todosLosDatos = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true`);
+        const todosLosDatos = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&todas=true`);
         
         for (let [index, num] of numeros.entries()) {
             setTimeout(async () => {
-                // Buscar el registro para determinar tipo de ficha
                 const registro = todosLosDatos.find(r => r.numero_entrada == num);
                 let url = '';
                 
@@ -297,7 +371,6 @@ async function imprimirLote(numeros) {
                     const especie = (registro.especie_cientifico || '').toString().toLowerCase();
                     const causa = (registro.posible_causa || '').toString().toLowerCase();
                     
-                    // ✅ Determinar endpoint según especie/causa
                     if (especie.includes('testudo hermanni hermanni')) {
                         url = `${SPREADSHEET_URL}?getFichaTestudo=${num}`;
                     } else if (causa.includes('nacido en el centro') || causa.includes('cría en cautividad')) {
@@ -309,12 +382,10 @@ async function imprimirLote(numeros) {
                         url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=${tipo}`;
                     }
                 } else {
-                    // Fallback: intentar con clínica por defecto
                     url = `${SPREADSHEET_URL}?getFichaManual=${num}&tipo=clinica`;
                 }
                 
                 const ventana = window.open(url, '_blank');
-                
                 if (ventana) {
                     ventanasAbiertas++;
                     ventana.onload = function() {
@@ -340,20 +411,8 @@ async function imprimirLote(numeros) {
     }
 }
 
-/* -------------------------
-   Event listeners (UI)
-   ------------------------- */
-document.getElementById('btnBuscar')?.addEventListener('click', () => {
-    buscarFichas(document.getElementById('buscador').value);
-});
-
-document.getElementById('buscador')?.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') buscarFichas(e.target.value);
-});
-
-// ========== NAVEGACIÓN RÁPIDA: Ir arriba / Ir abajo ==========
+// ========== NAVEGACIÓN RÁPIDA ==========
 document.getElementById('btnIrArriba')?.addEventListener('click', () => {
-    // Ir a la primera fila de resultados (después del header)
     const primeraFila = document.querySelector('.tabla-fichas tbody tr');
     if (primeraFila) {
         primeraFila.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -361,7 +420,6 @@ document.getElementById('btnIrArriba')?.addEventListener('click', () => {
 });
 
 document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
-    // Ir a la última fila de resultados
     const ultimaFila = document.querySelector('.tabla-fichas tbody tr:last-child');
     if (ultimaFila) {
         ultimaFila.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -370,65 +428,6 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
 
 // ========== INICIALIZACIÓN AL CARGAR LA PÁGINA ==========
 document.addEventListener('DOMContentLoaded', () => {
-    const ordenSelector = document.getElementById('ordenSelector');
-    const buscador = document.getElementById('buscador');
-
-    if (ordenSelector) {
-        ordenSelector.addEventListener('change', () => {
-            const termino = buscador ? buscador.value : '';
-            buscarFichas(termino);
-        });
-    }
-
-    // Cargar todos los registros al iniciar la página
-    buscarFichas();
+    // Cargar últimas 200 entradas al iniciar
+    cargarUltimas();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
