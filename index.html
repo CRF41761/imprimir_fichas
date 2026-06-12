@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🖨️ Sistema de Impresión de Fichas</title>
     <link rel="stylesheet" href="imprimir.css">
+    <style>
+        .filtro-container { margin-bottom: 20px; padding: 14px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .filtro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; align-items: end; }
+        .filtro-input { width: 100%; padding: 6px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+        .filtro-label { font-size: 0.85em; color: #666; margin-bottom: 4px; display: block; }
+        .btn-filtro { background: #17a2b8; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-ultimas { background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-todas { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .orden-container { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,33 +23,71 @@
             <p>La ficha a imprimir viene con el botón de impresión resaltado en verde vivo, aunque pueden imprimirse ambas si se precisa.</p>
         </header>
 
-        <div class="search-box">
-            <input type="text" id="buscador" placeholder="🔍 Buscar por Nº entrada, fecha, especie, municipio o estado...">
-            <button id="btnBuscar">Buscar</button>
+        <!-- CONTROLES DE FILTRO MEJORADOS -->
+        <div class="filtro-container">
+            <div class="filtro-grid">
+                <!-- Número de entrada -->
+                <div>
+                    <label class="filtro-label">N° Entrada</label>
+                    <input type="number" id="filtroNumero" class="filtro-input" placeholder="Ej: 3760">
+                </div>
+                
+                <!-- Especie -->
+                <div>
+                    <label class="filtro-label">Especie (común o científico)</label>
+                    <input type="text" id="filtroEspecie" class="filtro-input" placeholder="Ej: Búho real">
+                </div>
+                
+                <!-- Municipio -->
+                <div>
+                    <label class="filtro-label">Municipio</label>
+                    <input type="text" id="filtroMunicipio" class="filtro-input" placeholder="Ej: Valencia">
+                </div>
+                
+                <!-- Fecha -->
+                <div>
+                    <label class="filtro-label">Fecha</label>
+                    <input type="date" id="filtroFecha" class="filtro-input">
+                </div>
+                
+                <!-- Cumplimentado por -->
+                <div>
+                    <label class="filtro-label">Cumplimentado por</label>
+                    <input type="text" id="filtroCumplimentado" class="filtro-input" placeholder="Nombre del técnico">
+                </div>
+                
+                <!-- Controles de acción -->
+                <div style="grid-column: span 2; display: flex; gap: 8px; justify-content: flex-end;">
+                    <button onclick="buscarFichas()" class="btn-filtro">🔍 Buscar</button>
+                    <button onclick="cargarUltimas()" class="btn-ultimas">↻ Últimas 200</button>
+                    <button onclick="cargarTodas()" class="btn-todas">⚠️ Todas</button>
+                </div>
+                
+                <!-- Dropdown de ordenación -->
+                <div class="orden-container" style="grid-column: span 2;">
+                    <label>Ordenar por:</label>
+                    <select id="ordenSelector">
+                        <option value="entrada-asc">Nº Entrada (más antiguo primero)</option>
+                        <option value="entrada-desc" selected>Nº Entrada (más reciente primero)</option>
+                    </select>
+                </div>
+            </div>
         </div>
-
-        <div class="orden-filtro">
-  <label for="ordenSelector">Ordenar por:</label>
- <select id="ordenSelector">
-  <option value="entrada-asc">Nº Entrada (más antiguo primero)</option>
-  <option value="entrada-desc" selected>Nº Entrada (más reciente primero)</option>
-</select>
-</div>
         
         <div id="resultados">
-            <p style="text-align:center; color:#999; padding:20px;">Introduce términos de búsqueda y pulsa "Buscar"</p>
+            <p style="text-align:center; color:#999; padding:20px;">Cargando últimas fichas...</p>
         </div>
 
         <footer>
-            <p>💡 Consejo: Deja el buscador vacío y pulsa Buscar para ver todas las fichas</p>
+            <p>💡 Consejo: Usa los filtros para encontrar fichas específicas rápidamente</p>
         </footer>
     </div>
     
-<!-- Botones de navegación rápida -->
-<div class="botones-navegacion">
-    <button id="btnIrArriba" title="Ir a las primeras entradas">▲</button>
-    <button id="btnIrAbajo" title="Ir a las últimas entradas">▼</button>
-</div>
+    <!-- Botones de navegación rápida -->
+    <div class="botones-navegacion">
+        <button id="btnIrArriba" title="Ir a las primeras entradas">▲</button>
+        <button id="btnIrAbajo" title="Ir a las últimas entradas">▼</button>
+    </div>
     
     <script src="imprimir.js"></script>
 </body>
