@@ -410,7 +410,28 @@ async function imprimirLote(numeros) {
         alert('⚠️ Error al cargar datos para impresión por lotes.');
     }
 }
+// ========== EFECTO HOVER EN ICONO DE ORDENACIÓN ==========
+function initIconoHover() {
+    const icono = document.getElementById('iconoNumero');
+    if (icono) {
+        const th = icono.closest('th');
+        if (th) {
+            th.addEventListener('mouseenter', () => {
+                icono.style.transform = 'scale(1.2)';
+            });
+            th.addEventListener('mouseleave', () => {
+                icono.style.transform = 'scale(1)';
+            });
+        }
+    }
+}
 
+// Llamar a la inicialización cada vez que se renderice la tabla
+const originalMostrarResultados = mostrarResultados;
+mostrarResultados = function(...args) {
+    originalMostrarResultados.apply(this, args);
+    setTimeout(initIconoHover, 100); // Esperar a que el DOM se actualice
+};
 // ========== NAVEGACIÓN RÁPIDA ==========
 document.getElementById('btnIrArriba')?.addEventListener('click', () => {
     const primeraFila = document.querySelector('.tabla-fichas tbody tr');
