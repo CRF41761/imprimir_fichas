@@ -101,7 +101,14 @@ async function buscarFichas() {
         if (!Array.isArray(data)) {
             throw new Error('Respuesta inesperada del servidor');
         }
-        mostrarResultados(data);
+        
+        // ✅ Ordenar siempre por número de entrada descendente (más reciente primero)
+        const datosOrdenados = [...data].sort((a, b) => {
+            const numA = parseInt(a.numero_entrada) || 0;
+            const numB = parseInt(b.numero_entrada) || 0;
+            return numB - numA; // descendente = más reciente primero
+        });
+        mostrarResultados(datosOrdenados);
         
     } catch (error) {
         console.error('Error:', error);
