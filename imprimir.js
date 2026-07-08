@@ -36,14 +36,14 @@ function loadJSONP(url) {
 }
 
 /* -------------------------
-   Función principal: cargar últimas 50 entradas
+   Función principal: cargar últimas 200 entradas
    ------------------------- */
 async function cargarUltimas() {
     const resultadosDiv = document.getElementById('resultados');
-    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 50 fichas...</p>';
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 200 fichas...</p>';
     
     try {
-        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=50`);
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=200`);
         if (!Array.isArray(data)) {
             throw new Error('Respuesta inesperada del servidor');
         }
@@ -92,10 +92,10 @@ async function buscarFichas() {
         if (fecha) params.append('fecha', fecha);
         if (cumplimentado) params.append('cumplimentado', cumplimentado);
         
-        // Si no hay filtros, cargar últimas 50
-if (!numero && !especie && !municipio && !fecha && !cumplimentado) {
-    params.append('limit', '50');
-}
+        // Si no hay filtros, cargar últimas 200
+        if (!numero && !especie && !municipio && !fecha && !cumplimentado) {
+            params.append('limit', '200');
+        }
         
         const data = await loadJSONP(`${SPREADSHEET_URL}?${params.toString()}`);
         if (!Array.isArray(data)) {
@@ -443,6 +443,6 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
 
 // ========== INICIALIZACIÓN AL CARGAR LA PÁGINA ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Cargar últimas 50 entradas al iniciar
+    // Cargar últimas 200 entradas al iniciar
     cargarUltimas();
 });
