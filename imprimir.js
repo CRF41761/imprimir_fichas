@@ -36,7 +36,7 @@ function loadJSONP(url) {
 }
 
 /* -------------------------
-   Función principal: cargar últimas 200 entradas
+   Función principal: cargar últimas 50 entradas
    ------------------------- */
 async function cargarUltimas() {
     const resultadosDiv = document.getElementById('resultados');
