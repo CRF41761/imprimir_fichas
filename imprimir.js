@@ -43,7 +43,7 @@ async function cargarUltimas() {
     resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 200 fichas...</p>';
     
     try {
-        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=200`);
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=50`);
         if (!Array.isArray(data)) {
             throw new Error('Respuesta inesperada del servidor');
         }
