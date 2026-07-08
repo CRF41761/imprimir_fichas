@@ -40,7 +40,7 @@ function loadJSONP(url) {
    ------------------------- */
 async function cargarUltimas() {
     const resultadosDiv = document.getElementById('resultados');
-    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 200 fichas...</p>';
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 50 fichas...</p>';
     
     try {
         const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=50`);
