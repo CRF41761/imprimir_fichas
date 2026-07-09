@@ -36,14 +36,14 @@ function loadJSONP(url) {
 }
 
 /* -------------------------
-   Función principal: cargar últimas 200 entradas
+   Función principal: cargar últimas 50 entradas
    ------------------------- */
 async function cargarUltimas() {
     const resultadosDiv = document.getElementById('resultados');
-    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 200 fichas...</p>';
+    resultadosDiv.innerHTML = '<p style="text-align:center;">⏳ Cargando últimas 50 fichas...</p>';
     
     try {
-        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=200`);
+        const data = await loadJSONP(`${SPREADSHEET_URL}?getAllData=true&limit=50`);
         if (!Array.isArray(data)) {
             throw new Error('Respuesta inesperada del servidor');
         }
