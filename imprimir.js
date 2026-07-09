@@ -92,9 +92,9 @@ async function buscarFichas() {
         if (fecha) params.append('fecha', fecha);
         if (cumplimentado) params.append('cumplimentado', cumplimentado);
         
-        // Si no hay filtros, cargar últimas 200
+        // Si no hay filtros, cargar últimas 50
         if (!numero && !especie && !municipio && !fecha && !cumplimentado) {
-            params.append('limit', '200');
+            params.append('limit', '50');
         }
         
         const data = await loadJSONP(`${SPREADSHEET_URL}?${params.toString()}`);
