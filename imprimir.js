@@ -180,6 +180,7 @@ function mostrarResultados(registros) {
                     <th>Especie</th>
                     <th>Municipio</th>
                     <th>Cumplimentado</th>
+                    <th>Causa</th> <!-- ✅ NUEVA COLUMNA -->
                     <th>Coordenadas</th>
                     <th>Acción</th>
                 </tr>
