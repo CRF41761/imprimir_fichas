@@ -198,6 +198,7 @@ function mostrarResultados(registros) {
                         <td>${reg.especie_comun || '-'}</td>
                         <td>${reg.municipio || '-'}</td>
                         <td>${reg.cumplimentado || '-'}</td>
+                        <td>${reg.posible_causa || '-'}</td> <!-- ✅ NUEVO DATO -->
                         <td>${reg.coordenadas_mapa || '-'}</td>
                         <td>
                             <div class="botones-impresion">
