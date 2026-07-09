@@ -445,6 +445,6 @@ document.getElementById('btnIrAbajo')?.addEventListener('click', () => {
 
 // ========== INICIALIZACIÓN AL CARGAR LA PÁGINA ==========
 document.addEventListener('DOMContentLoaded', () => {
-    // Cargar últimas 200 entradas al iniciar
+    // Cargar últimas 50 entradas al iniciar
     cargarUltimas();
 });
