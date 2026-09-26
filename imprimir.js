@@ -15,24 +15,114 @@ function normalizarTexto(texto) {
 /* -------------------------
    Helper JSONP (evita CORS)
    ------------------------- */
-function loadJSONP(url) {
-    return new Promise((resolve, reject) => {
-        const callbackName = 'cb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-        window[callbackName] = function(data) {
-            resolve(data);
-            try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
-            if (script && script.parentNode) script.parentNode.removeChild(script);
-        };
-        const script = document.createElement('script');
-        script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + 'callback=' + callbackName;
-        script.async = true;
-        script.onerror = function(err) {
-            try { delete window[callbackName]; } catch (e) { window[callbackName] = undefined; }
-            if (script && script.parentNode) script.parentNode.removeChild(script);
-            reject(new Error('JSONP load error'));
-        };
-        document.body.appendChild(script);
-    });
+function loadJSONP(url, options = {}) {
+    const maxRetries = options.retries ?? 2;
+    const timeoutMs = options.timeout ?? 10000;
+
+    function intentar() {
+        return new Promise((resolve, reject) => {
+            const callbackName =
+                'cb_' +
+                Date.now() +
+                '_' +
+                Math.floor(Math.random() * 100000);
+
+            const script = document.createElement('script');
+
+            let timer = null;
+            let terminado = false;
+
+            function limpiar() {
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+
+                if (script.parentNode) {
+                    script.parentNode.removeChild(script);
+                }
+
+                try {
+                    delete window[callbackName];
+                } catch (e) {
+                    window[callbackName] = undefined;
+                }
+            }
+
+            function finalizarCorrectamente(data) {
+                if (terminado) return;
+
+                terminado = true;
+                limpiar();
+                resolve(data);
+            }
+
+            function finalizarConError(error) {
+                if (terminado) return;
+
+                terminado = true;
+                limpiar();
+                reject(error);
+            }
+
+            window[callbackName] = function(data) {
+                finalizarCorrectamente(data);
+            };
+
+            const separador = url.includes('?') ? '&' : '?';
+
+            script.src =
+                url +
+                separador +
+                'callback=' +
+                encodeURIComponent(callbackName);
+
+            script.async = true;
+
+            script.onerror = function() {
+                finalizarConError(
+                    new Error('JSONP load error')
+                );
+            };
+
+            timer = setTimeout(function() {
+                finalizarConError(
+                    new Error('JSONP timeout')
+                );
+            }, timeoutMs);
+
+            document.body.appendChild(script);
+        });
+    }
+
+    return (async function() {
+        let ultimoError = null;
+
+        for (let intento = 0; intento <= maxRetries; intento++) {
+            try {
+                return await intentar();
+            } catch (error) {
+                ultimoError = error;
+
+                console.warn(
+                    `JSONP: intento ${intento + 1} de ${maxRetries + 1} fallido:`,
+                    error.message
+                );
+
+                if (intento < maxRetries) {
+                    // Espera progresivamente antes de volver a intentar
+                    await new Promise(resolve =>
+                        setTimeout(resolve, 500 * (intento + 1))
+                    );
+                }
+            }
+        }
+
+        throw new Error(
+            `No se pudo cargar la información mediante JSONP después de ` +
+            `${maxRetries + 1} intentos. Último error: ${ultimoError.message}`
+        );
+    })();
 }
 
 /* -------------------------
