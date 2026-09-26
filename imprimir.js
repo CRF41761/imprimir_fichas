@@ -17,7 +17,7 @@ function normalizarTexto(texto) {
    ------------------------- */
 function loadJSONP(url, options = {}) {
     const maxRetries = options.retries ?? 2;
-    const timeoutMs = options.timeout ?? 10000;
+    const timeoutMs = options.timeout ?? 15000;
 
     function intentar() {
         return new Promise((resolve, reject) => {
